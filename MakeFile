@@ -1,0 +1,10 @@
+all: build
+
+build:
+	gcc -c -I include main.cpp
+	gcc -L lib main.o -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o main
+
+run: build
+	./main
+
+.PHONY: build run
