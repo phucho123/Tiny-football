@@ -11,11 +11,11 @@ Ball::Ball(Vector2f p_pos, float scale, SDL_Texture *p_texture)
     : Entity(p_pos, scale, p_texture)
 {
     acceleration = Vector2f(0, 0);
-    speed = Vector2f(5, 5);
+    speed = Vector2f(0, 0);
     friction = 0.005f;
 }
 
-void Ball::move()
+void Ball::update()
 {
     if (pos.x < 0 || pos.x + 32 > 935)
     {
@@ -42,4 +42,10 @@ void Ball::move()
 
     pos.x += speed.x;
     pos.y += speed.y;
+}
+
+void Ball::setSpeed(float speedX, float speedY)
+{
+    speed.x = speedX;
+    speed.y = speedY;
 }
