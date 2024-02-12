@@ -15,8 +15,12 @@ public:
     void setAcceleration(float accelerationX, float accelerationY);
     Vector2f &getAcceleration();
     void update();
+    int getGoal();
+    void setGoal(int goal);
+    void reset();
 
 private:
     Vector2f speed, acceleration;
     float friction;
+    int goal;
 };

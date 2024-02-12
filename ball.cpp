@@ -13,18 +13,26 @@ Ball::Ball(Vector2f p_pos, float scale, SDL_Texture *p_texture)
     acceleration = Vector2f(0, 0);
     speed = Vector2f(0, 0);
     friction = 0.005f;
+    goal = 0;
 }
 
 void Ball::update()
 {
-    if (pos.x < 0 || pos.x + 32 > 935)
+    if (pos.x < 64 || pos.x + 32 > 877)
     {
-        speed.x = -speed.x;
+        if (pos.x < 36)
+            goal = 2;
+        else if (pos.x + 32 > 902)
+            goal = 1;
+        if ((pos.x < 36 || pos.x + 32 > 902) || (pos.y < 260 || pos.y > 345))
+            speed.x = -speed.x;
     }
-    if (pos.y < 0 || pos.y + 32 > 600)
+    if (pos.y < 27 || pos.y + 32 > 577)
     {
         speed.y = -speed.y;
     }
+    if ((pos.x < 64 || pos.x + 32 > 877) && (pos.y < 260 || pos.y > 350))
+        speed.y = -speed.y;
 
     if (speed.x < 0)
         speed.x += friction;
@@ -48,4 +56,25 @@ void Ball::setSpeed(float speedX, float speedY)
 {
     speed.x = speedX;
     speed.y = speedY;
+}
+
+int Ball::getGoal()
+{
+    return goal;
+}
+
+void Ball::setGoal(int goal)
+{
+    this->goal = goal;
+}
+
+void Ball::reset()
+{
+    pos.x = 470 - 16;
+    pos.y = 300 - 16;
+
+    speed.x = 0;
+    speed.y = 0;
+
+    goal = 0;
 }

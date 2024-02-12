@@ -17,9 +17,11 @@ public:
     void setAcceleration(float accelerationX, float accelerationY);
     Vector2f &getAcceleration();
     void update(Ball &ball);
+    void reset();
 
 private:
     Vector2f speed, acceleration;
     float friction;
     bool collide;
+    int old_posX, old_posY;
 };

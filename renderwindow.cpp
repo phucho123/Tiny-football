@@ -37,10 +37,23 @@ void RenderWindow::clear()
 
 void RenderWindow::render(Entity &entity)
 {
-    SDL_Rect rect = entity.getRect();
-    rect.x = entity.getPos().x;
-    rect.y = entity.getPos().y;
-    SDL_RenderCopy(renderer, entity.getTexture(), NULL, &rect);
+    // SDL_Rect rect = entity.getRect();
+    // rect.x = entity.getPos().x;
+    // rect.y = entity.getPos().y;
+    // SDL_RenderCopy(renderer, entity.getTexture(), NULL, &rect);
+
+    SDL_Rect rect_src;
+    rect_src.x = entity.getRect().x;
+    rect_src.y = entity.getRect().y;
+    rect_src.w = entity.getRect().w;
+    rect_src.h = entity.getRect().h;
+
+    SDL_Rect rect_dst;
+    rect_dst.x = entity.getPos().x;
+    rect_dst.y = entity.getPos().y;
+    rect_dst.w = entity.getRect().w * entity.getScale();
+    rect_dst.h = entity.getRect().h * entity.getScale();
+    SDL_RenderCopy(renderer, entity.getTexture(), &rect_src, &rect_dst);
 }
 
 void RenderWindow::display()

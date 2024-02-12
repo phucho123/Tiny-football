@@ -15,6 +15,8 @@ Player::Player(Vector2f p_pos, float scale, SDL_Texture *p_texture)
     speed = Vector2f(0, 0);
     friction = 0.005f;
     collide = false;
+    old_posX = p_pos.x;
+    old_posY = p_pos.y;
 }
 
 void Player::update(Ball &ball)
@@ -92,4 +94,12 @@ void Player::addSpeed(float speedX, float speedY)
         speed.y = 2;
     else if (speed.y < -2)
         speed.y = -2;
+}
+
+void Player::reset()
+{
+    pos.x = old_posX;
+    pos.y = old_posY;
+    speed.x = 0;
+    speed.y = 0;
 }
