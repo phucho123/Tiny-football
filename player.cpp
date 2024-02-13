@@ -65,7 +65,7 @@ void Player::update(Ball &ball)
 
         if (!collide)
         {
-            ball.setSpeed(speed.x, speed.y);
+            ball.setSpeed(1.5 * speed.x, 1.5 * speed.y);
             speed.x = -speed.x / 2;
             speed.y = -speed.y / 2;
             collide = true;
