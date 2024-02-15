@@ -136,6 +136,26 @@ int main(int argc, char *argv[])
             players1[i].update(ball);
             players2[i].update(ball);
         }
+
+        float dist_1 = players1[0].distanceToBall(ball);
+        float dist_2 = players2[0].distanceToBall(ball);
+        player1_active = 0;
+        player2_active = 0;
+        for (int i = 1; i < 3; i++)
+        {
+            float val1 = players1[i].distanceToBall(ball);
+            float val2 = players2[i].distanceToBall(ball);
+            if (val1 < dist_1)
+            {
+                player1_active = i;
+                dist_1 = val1;
+            }
+            if (val2 < dist_2)
+            {
+                player2_active = i;
+                dist_2 = val2;
+            }
+        }
         pointer1.setPos(players1[player1_active].getPos().x + 25, players1[player1_active].getPos().y - 12);
         pointer2.setPos(players2[player2_active].getPos().x + 25, players2[player2_active].getPos().y - 12);
 
@@ -151,6 +171,8 @@ int main(int argc, char *argv[])
                     players2[i].reset();
                     players1[i].reset();
                 }
+                player1_active = 0;
+                player2_active = 0;
             }
             else if (ball.getGoal() == 2)
             {
@@ -162,6 +184,8 @@ int main(int argc, char *argv[])
                     players2[i].reset();
                     players1[i].reset();
                 }
+                player1_active = 0;
+                player2_active = 0;
             }
         }
 

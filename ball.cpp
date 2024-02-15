@@ -31,7 +31,7 @@ void Ball::update()
     {
         speed.y = -speed.y;
     }
-    if ((pos.x < 64 || pos.x + 32 > 877) && (pos.y < 260 || pos.y > 350))
+    if ((pos.x < 64 || pos.x + 32 > 877) && (pos.y < 260 || pos.y > 345))
         speed.y = -speed.y;
 
     if (speed.x < 0)

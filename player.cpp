@@ -47,8 +47,11 @@ void Player::update(Ball &ball)
     pos.x += speed.x;
     pos.y += speed.y;
 
-    if ((abs(ball.getPos().x + 16 - (pos.x + 32)) <= 48) && (abs(ball.getPos().y + 16 - (pos.y + 32)) <= 48))
+    float dist = SDL_sqrt(SDL_pow(ball.getPos().x + 16 - (pos.x + 32), 2) + SDL_pow(ball.getPos().y + 16 - (pos.y + 32), 2));
+
+    if (dist < 48)
     {
+        // (abs(ball.getPos().x + 16 - (pos.x + 32)) < 48) && (abs(ball.getPos().y + 16 - (pos.y + 32)) < 48)
         // int a = abs(ball.getPos().x + 16 - (pos.x + 32));
         // int b = abs(ball.getPos().y + 16 - (pos.y + 32));
 
@@ -102,4 +105,9 @@ void Player::reset()
     pos.y = old_posY;
     speed.x = 0;
     speed.y = 0;
+}
+
+float Player::distanceToBall(Ball &ball)
+{
+    return SDL_sqrt(SDL_pow(ball.getPos().x + 16 - (pos.x + 32), 2) + SDL_pow(ball.getPos().y + 16 - (pos.y + 32), 2));
 }

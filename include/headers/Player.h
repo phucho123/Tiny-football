@@ -18,6 +18,7 @@ public:
     Vector2f &getAcceleration();
     void update(Ball &ball);
     void reset();
+    float distanceToBall(Ball &ball);
 
 private:
     Vector2f speed, acceleration;
