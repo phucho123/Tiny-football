@@ -24,14 +24,14 @@ void Ball::update()
             goal = 2;
         else if (pos.x + 32 > 902)
             goal = 1;
-        if ((pos.x < 36 || pos.x + 32 > 902) || (pos.y < 260 || pos.y + 32 > 348))
+        if ((pos.x < 36 || pos.x + 32 > 902) || (pos.y < 260 || pos.y + 32 > 350))
             speed.x = -speed.x;
     }
     if (pos.y < 27 || pos.y + 32 > 577)
     {
         speed.y = -speed.y;
     }
-    if ((pos.x < 64 || pos.x + 32 > 877) && (pos.y < 260 || pos.y + 32 > 348))
+    if ((pos.x < 36 || pos.x + 32 > 902) && (pos.y < 260 || pos.y + 32 > 350))
         speed.y = -speed.y;
 
     if (speed.x < 0)
