@@ -17,6 +17,8 @@ Player::Player(Vector2f p_pos, float scale, SDL_Texture *p_texture)
     collide = false;
     old_posX = p_pos.x;
     old_posY = p_pos.y;
+    isAI = false;
+    AI_canMove = 10;
 }
 
 void Player::update(Ball &ball)
@@ -68,10 +70,26 @@ void Player::update(Ball &ball)
 
         if (!collide)
         {
-            ball.setSpeed(1.5 * speed.x, 1.5 * speed.y);
-            speed.x = -speed.x / 2;
-            speed.y = -speed.y / 2;
-            collide = true;
+            if (!isAI)
+            {
+                ball.setSpeed(1.5 * speed.x, 1.5 * speed.y);
+                speed.x = -speed.x / 2;
+                speed.y = -speed.y / 2;
+                collide = true;
+            }
+            else
+            {
+                int dirX = 40 - (ball.getPos().x + 16);
+                int dirY = 300 - (ball.getPos().y + 16);
+                int dist = SDL_sqrt(dirX * dirX + dirY * dirY);
+                if (dist > 0)
+                {
+                    ball.setSpeed(1.5 * dirX / dist, 1.5 * dirY / dist);
+                    speed.x = -dirX / dist * 1.5;
+                    speed.y = -dirY / dist * 1.5;
+                }
+                collide = true;
+            }
         }
     }
     else
@@ -110,4 +128,25 @@ void Player::reset()
 float Player::distanceToBall(Ball &ball)
 {
     return SDL_sqrt(SDL_pow(ball.getPos().x + 16 - (pos.x + 32), 2) + SDL_pow(ball.getPos().y + 16 - (pos.y + 32), 2));
+}
+
+void Player::AI_play(Ball &ball)
+{
+    if (isAI && (AI_canMove == 0))
+    {
+        int dirX = ball.getPos().x - pos.x;
+        int dirY = ball.getPos().y - pos.y;
+        int dist = SDL_sqrt(dirX * dirX + dirY * dirY);
+        setSpeed(0, 0);
+        if (dist > 0)
+            addSpeed(2 * dirX / dist, 2 * dirY / dist);
+        AI_canMove = 70;
+    }
+    else
+        AI_canMove--;
+}
+
+void Player::setAI(bool isAI)
+{
+    this->isAI = isAI;
 }

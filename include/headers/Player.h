@@ -19,10 +19,14 @@ public:
     void update(Ball &ball);
     void reset();
     float distanceToBall(Ball &ball);
+    void AI_play(Ball &ball);
+    void setAI(bool isAI);
 
 private:
     Vector2f speed, acceleration;
     float friction;
     bool collide;
     int old_posX, old_posY;
+    bool isAI;
+    int AI_canMove;
 };

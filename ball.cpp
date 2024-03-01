@@ -58,6 +58,11 @@ void Ball::setSpeed(float speedX, float speedY)
     speed.y = speedY;
 }
 
+Vector2f &Ball::getSpeed()
+{
+    return speed;
+}
+
 int Ball::getGoal()
 {
     return goal;

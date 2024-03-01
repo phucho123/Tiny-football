@@ -28,7 +28,9 @@ int main(int argc, char *argv[])
     SDL_Texture *player2_texture = window.loadTexture("assets/images/mc.png");
     SDL_Texture *numbers_texture = window.loadTexture("assets/images/number.png");
     SDL_Texture *pointer_texture = window.loadTexture("assets/images/pointer.png");
+    SDL_Texture *menu_texture = window.loadTexture("assets/images/menu.png");
     Entity field(Vector2f(0, 0), 1.5, field_texture);
+    Entity menu(Vector2f(0, 0), 1, menu_texture);
     Entity goal_of_player1(Vector2f(260, 0), 0.5, numbers_texture);
     SDL_Rect tmp1 = goal_of_player1.getRect();
     goal_of_player1.setRect(0, -1, tmp1.w / 10, -1);
@@ -36,6 +38,7 @@ int main(int argc, char *argv[])
     SDL_Rect tmp2 = goal_of_player2.getRect();
     goal_of_player2.setRect(0, -1, tmp1.w / 10, -1);
     Ball ball(Vector2f(470 - 16, 300 - 16), 0.5, ball_texture);
+    // Ball ball(Vector2f(100, 100), 0.5, ball_texture);
     Player players2[3] = {Player(Vector2f(540 - 32, 300 - 32), 1, player2_texture),
                           Player(Vector2f(700 - 32, 200 - 32), 1, player2_texture),
                           Player(Vector2f(700 - 32, 400 - 32), 1, player2_texture)};
@@ -43,6 +46,10 @@ int main(int argc, char *argv[])
     Player players1[3] = {Player(Vector2f(400 - 32, 300 - 32), 1, player1_texture),
                           Player(Vector2f(240 - 32, 200 - 32), 1, player1_texture),
                           Player(Vector2f(240 - 32, 400 - 32), 1, player1_texture)};
+    for (int i = 0; i < 3; i++)
+    {
+        players2[i].setAI(true);
+    }
     int player2_active = 0, player1_active = 0;
     Entity pointer1(Vector2f(players1[player1_active].getPos().x + 25, players1[player1_active].getPos().y - 12), 0.2, pointer_texture);
     Entity pointer2(Vector2f(players2[player2_active].getPos().x + 25, players2[player2_active].getPos().y - 12), 0.2, pointer_texture);
@@ -57,6 +64,8 @@ int main(int argc, char *argv[])
     float currentTime = utils::hireTimeInSeconds();
 
     int mouseX, mouseY;
+    int gameStart = true;
+    int kickoff = false;
 
     while (!quit)
     {
@@ -129,80 +138,95 @@ int main(int argc, char *argv[])
             accumulator -= timeStep;
         }
         const float alpha = accumulator / timeStep;
-
-        ball.update();
-        for (int i = 0; i < 3; i++)
+        if (gameStart)
         {
-            players1[i].update(ball);
-            players2[i].update(ball);
-        }
-
-        float dist_1 = players1[0].distanceToBall(ball);
-        float dist_2 = players2[0].distanceToBall(ball);
-        player1_active = 0;
-        player2_active = 0;
-        for (int i = 1; i < 3; i++)
-        {
-            float val1 = players1[i].distanceToBall(ball);
-            float val2 = players2[i].distanceToBall(ball);
-            if (val1 < dist_1)
+            ball.update();
+            if (!kickoff && ball.getSpeed().x != 0 || ball.getSpeed().y != 0)
+                kickoff = true;
+            if (kickoff)
             {
-                player1_active = i;
-                dist_1 = val1;
+                players2[player2_active].AI_play(ball);
             }
-            if (val2 < dist_2)
+            for (int i = 0; i < 3; i++)
             {
-                player2_active = i;
-                dist_2 = val2;
+                players1[i].update(ball);
+                players2[i].update(ball);
             }
-        }
-        pointer1.setPos(players1[player1_active].getPos().x + 25, players1[player1_active].getPos().y - 12);
-        pointer2.setPos(players2[player2_active].getPos().x + 25, players2[player2_active].getPos().y - 12);
 
-        if (ball.getGoal() > 0)
-        {
-            if (ball.getGoal() == 1)
+            float dist_1 = players1[0].distanceToBall(ball);
+            float dist_2 = players2[0].distanceToBall(ball);
+            player1_active = 0;
+            player2_active = 0;
+            for (int i = 1; i < 3; i++)
             {
-                player1_goals++;
-                goal_of_player1.setRect(158 * player1_goals, -1, -1, -1);
-                ball.reset();
-                for (int i = 0; i < 3; i++)
+                float val1 = players1[i].distanceToBall(ball);
+                float val2 = players2[i].distanceToBall(ball);
+                if (val1 < dist_1)
                 {
-                    players2[i].reset();
-                    players1[i].reset();
+                    player1_active = i;
+                    dist_1 = val1;
                 }
-                player1_active = 0;
-                player2_active = 0;
-            }
-            else if (ball.getGoal() == 2)
-            {
-                player2_goals++;
-                goal_of_player2.setRect(158 * player2_goals, -1, -1, -1);
-                ball.reset();
-                for (int i = 0; i < 3; i++)
+                if (val2 < dist_2)
                 {
-                    players2[i].reset();
-                    players1[i].reset();
+                    player2_active = i;
+                    dist_2 = val2;
                 }
-                player1_active = 0;
-                player2_active = 0;
             }
-        }
+            pointer1.setPos(players1[player1_active].getPos().x + 25, players1[player1_active].getPos().y - 12);
+            pointer2.setPos(players2[player2_active].getPos().x + 25, players2[player2_active].getPos().y - 12);
 
-        window.clear();
-        window.render(field);
-        window.render(ball);
-        for (int i = 0; i < 3; i++)
-        {
-            window.render(players1[i]);
-            window.render(players2[i]);
+            if (ball.getGoal() > 0)
+            {
+                kickoff = false;
+                if (ball.getGoal() == 1)
+                {
+                    player1_goals++;
+                    goal_of_player1.setRect(158 * player1_goals, -1, -1, -1);
+                    ball.reset();
+                    for (int i = 0; i < 3; i++)
+                    {
+                        players2[i].reset();
+                        players1[i].reset();
+                    }
+                    player1_active = 0;
+                    player2_active = 0;
+                }
+                else if (ball.getGoal() == 2)
+                {
+                    player2_goals++;
+                    goal_of_player2.setRect(158 * player2_goals, -1, -1, -1);
+                    ball.reset();
+                    for (int i = 0; i < 3; i++)
+                    {
+                        players2[i].reset();
+                        players1[i].reset();
+                    }
+                    player1_active = 0;
+                    player2_active = 0;
+                }
+            }
+
+            window.clear();
+            window.render(field);
+            window.render(ball);
+            for (int i = 0; i < 3; i++)
+            {
+                window.render(players1[i]);
+                window.render(players2[i]);
+            }
+            window.render(goal_of_player1);
+            window.render(goal_of_player2);
+            window.render(pointer1);
+            window.render(pointer2);
+            window.display();
+            // SDL_Delay(10);
         }
-        window.render(goal_of_player1);
-        window.render(goal_of_player2);
-        window.render(pointer1);
-        window.render(pointer2);
-        window.display();
-        // SDL_Delay(10);
+        else
+        {
+            window.clear();
+            window.render(menu);
+            window.display();
+        }
 
         int frameTicks = SDL_GetTicks() - startTicks;
 
