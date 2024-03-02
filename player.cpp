@@ -17,7 +17,7 @@ Player::Player(Vector2f p_pos, float scale, SDL_Texture *p_texture)
     collide = false;
     old_posX = p_pos.x;
     old_posY = p_pos.y;
-    isAI = false;
+    _isAI = false;
     AI_canMove = 10;
 }
 
@@ -70,7 +70,7 @@ void Player::update(Ball &ball)
 
         if (!collide)
         {
-            if (!isAI)
+            if (!_isAI)
             {
                 // ball.setSpeed(1.5 * speed.x, 1.5 * speed.y);
                 ball.setSpeed(2 * speed.x, 2 * speed.y);
@@ -133,7 +133,7 @@ float Player::distanceToBall(Ball &ball)
 
 void Player::AI_play(Ball &ball)
 {
-    if (isAI && (AI_canMove == 0))
+    if (_isAI && (AI_canMove == 0))
     {
         float dirX = ball.getPos().x - pos.x;
         float dirY = ball.getPos().y - pos.y;
@@ -149,5 +149,10 @@ void Player::AI_play(Ball &ball)
 
 void Player::setAI(bool isAI)
 {
-    this->isAI = isAI;
+    _isAI = isAI;
+}
+
+bool Player::isAI()
+{
+    return _isAI;
 }

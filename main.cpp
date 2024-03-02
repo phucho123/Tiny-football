@@ -29,8 +29,14 @@ int main(int argc, char *argv[])
     SDL_Texture *numbers_texture = window.loadTexture("assets/images/number.png");
     SDL_Texture *pointer_texture = window.loadTexture("assets/images/pointer.png");
     SDL_Texture *menu_texture = window.loadTexture("assets/images/menu.png");
+    SDL_Texture *playervsplayer_texture = window.loadTexture("assets/images/playervsplayer.png");
+    SDL_Texture *playervsai_texture = window.loadTexture("assets/images/playervsai.png");
+
     Entity field(Vector2f(0, 0), 1.5, field_texture);
     Entity menu(Vector2f(0, 0), 1, menu_texture);
+    Entity playervsplayer_button(Vector2f(315, 190), 1, playervsplayer_texture);
+    Entity playervsai_button(Vector2f(315, 320), 1, playervsai_texture);
+
     Entity goal_of_player1(Vector2f(260, 0), 0.5, numbers_texture);
     SDL_Rect tmp1 = goal_of_player1.getRect();
     goal_of_player1.setRect(0, -1, tmp1.w / 10, -1);
@@ -46,10 +52,7 @@ int main(int argc, char *argv[])
     Player players1[3] = {Player(Vector2f(400 - 32, 300 - 32), 1, player1_texture),
                           Player(Vector2f(240 - 32, 200 - 32), 1, player1_texture),
                           Player(Vector2f(240 - 32, 400 - 32), 1, player1_texture)};
-    for (int i = 0; i < 3; i++)
-    {
-        players2[i].setAI(true);
-    }
+
     int player2_active = 0, player1_active = 0;
     Entity pointer1(Vector2f(players1[player1_active].getPos().x + 25, players1[player1_active].getPos().y - 12), 0.2, pointer_texture);
     Entity pointer2(Vector2f(players2[player2_active].getPos().x + 25, players2[player2_active].getPos().y - 12), 0.2, pointer_texture);
@@ -64,7 +67,7 @@ int main(int argc, char *argv[])
     float currentTime = utils::hireTimeInSeconds();
 
     int mouseX, mouseY;
-    int gameStart = true;
+    int gameStart = false;
     int kickoff = false;
 
     while (!quit)
@@ -106,16 +109,20 @@ int main(int argc, char *argv[])
                         pointer1.setPos(players1[player1_active].getPos().x + 25, players1[player1_active].getPos().y - 12);
                         break;
                     case SDLK_LEFT:
-                        players2[player2_active].addSpeed(-1.5, 0);
+                        if (!players2[player2_active].isAI())
+                            players2[player2_active].addSpeed(-1.5, 0);
                         break;
                     case SDLK_RIGHT:
-                        players2[player2_active].addSpeed(1.5, 0);
+                        if (!players2[player2_active].isAI())
+                            players2[player2_active].addSpeed(1.5, 0);
                         break;
                     case SDLK_UP:
-                        players2[player2_active].addSpeed(0, -1.5);
+                        if (!players2[player2_active].isAI())
+                            players2[player2_active].addSpeed(0, -1.5);
                         break;
                     case SDLK_DOWN:
-                        players2[player2_active].addSpeed(0, 1.5);
+                        if (!players2[player2_active].isAI())
+                            players2[player2_active].addSpeed(0, 1.5);
                         break;
                     case SDLK_RSHIFT:
                         player2_active = (player2_active + 1) % 3;
@@ -128,18 +135,39 @@ int main(int argc, char *argv[])
 
                 else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
                     break;
-
-                if (e.type == SDL_MOUSEMOTION)
+                else if (e.type == SDL_MOUSEBUTTONDOWN)
                 {
-                    SDL_GetMouseState(&mouseX, &mouseY);
-                    std::cout << mouseX << ", " << mouseY << std::endl;
+                    std::cout << e.button.x << ", " << e.button.y << std::endl;
+                    if (!gameStart)
+                    {
+                        if (e.button.x > 315 && e.button.x < 615 && e.button.y > 190 && e.button.y < 282)
+                        {
+                            gameStart = true;
+                        }
+                        else if (e.button.x > 315 && e.button.x < 615 && e.button.y > 320 && e.button.y < 412)
+                        {
+                            gameStart = true;
+                            for (int i = 0; i < 3; i++)
+                            {
+                                players2[i].setAI(true);
+                            }
+                        }
+                    }
                 }
+
+                // if (e.type == SDL_MOUSEMOTION)
+                // {
+                //     SDL_GetMouseState(&mouseX, &mouseY);
+                //     std::cout << mouseX << ", " << mouseY << std::endl;
+                // }
             }
             accumulator -= timeStep;
         }
         const float alpha = accumulator / timeStep;
         if (gameStart)
         {
+            if (player1_goals > 9 || player2_goals > 9)
+                quit = true;
             ball.update();
             if (!kickoff && ball.getSpeed().x != 0 || ball.getSpeed().y != 0)
                 kickoff = true;
@@ -225,6 +253,8 @@ int main(int argc, char *argv[])
         {
             window.clear();
             window.render(menu);
+            window.render(playervsplayer_button);
+            window.render(playervsai_button);
             window.display();
         }
 
