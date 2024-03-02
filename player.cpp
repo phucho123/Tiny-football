@@ -51,7 +51,7 @@ void Player::update(Ball &ball)
 
     float dist = SDL_sqrt(SDL_pow(ball.getPos().x + 16 - (pos.x + 32), 2) + SDL_pow(ball.getPos().y + 16 - (pos.y + 32), 2));
 
-    if (dist < 48)
+    if (dist < 45)
     {
         // (abs(ball.getPos().x + 16 - (pos.x + 32)) < 48) && (abs(ball.getPos().y + 16 - (pos.y + 32)) < 48)
         // int a = abs(ball.getPos().x + 16 - (pos.x + 32));
@@ -72,16 +72,17 @@ void Player::update(Ball &ball)
         {
             if (!isAI)
             {
-                ball.setSpeed(1.5 * speed.x, 1.5 * speed.y);
-                speed.x = -speed.x / 2;
-                speed.y = -speed.y / 2;
+                // ball.setSpeed(1.5 * speed.x, 1.5 * speed.y);
+                ball.setSpeed(2 * speed.x, 2 * speed.y);
+                speed.x = -speed.x * 1;
+                speed.y = -speed.y * 1;
                 collide = true;
             }
             else
             {
-                int dirX = 40 - (ball.getPos().x + 16);
-                int dirY = 300 - (ball.getPos().y + 16);
-                int dist = SDL_sqrt(dirX * dirX + dirY * dirY);
+                float dirX = 40 - (ball.getPos().x + 16);
+                float dirY = 300 - (ball.getPos().y + 16);
+                float dist = SDL_sqrt(dirX * dirX + dirY * dirY);
                 if (dist > 0)
                 {
                     ball.setSpeed(1.5 * dirX / dist, 1.5 * dirY / dist);
@@ -134,9 +135,9 @@ void Player::AI_play(Ball &ball)
 {
     if (isAI && (AI_canMove == 0))
     {
-        int dirX = ball.getPos().x - pos.x;
-        int dirY = ball.getPos().y - pos.y;
-        int dist = SDL_sqrt(dirX * dirX + dirY * dirY);
+        float dirX = ball.getPos().x - pos.x;
+        float dirY = ball.getPos().y - pos.y;
+        float dist = SDL_sqrt(dirX * dirX + dirY * dirY);
         setSpeed(0, 0);
         if (dist > 0)
             addSpeed(2 * dirX / dist, 2 * dirY / dist);
