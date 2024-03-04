@@ -51,7 +51,7 @@ void Player::update(Ball &ball)
 
     float dist = SDL_sqrt(SDL_pow(ball.getPos().x + 16 - (pos.x + 32), 2) + SDL_pow(ball.getPos().y + 16 - (pos.y + 32), 2));
 
-    if (dist < 45)
+    if (dist < 48)
     {
         // (abs(ball.getPos().x + 16 - (pos.x + 32)) < 48) && (abs(ball.getPos().y + 16 - (pos.y + 32)) < 48)
         // int a = abs(ball.getPos().x + 16 - (pos.x + 32));
@@ -72,10 +72,10 @@ void Player::update(Ball &ball)
         {
             if (!_isAI)
             {
-                // ball.setSpeed(1.5 * speed.x, 1.5 * speed.y);
                 ball.setSpeed(2 * speed.x, 2 * speed.y);
-                speed.x = -speed.x * 1;
-                speed.y = -speed.y * 1;
+                speed.x = -speed.x;
+                speed.y = -speed.y;
+                // if (dist < 40)
                 collide = true;
             }
             else
@@ -91,6 +91,18 @@ void Player::update(Ball &ball)
                 }
                 collide = true;
             }
+        }
+        else
+        {
+            // if (!_isAI)
+            // {
+            //     speed.x += ball.getSpeed().x;
+            //     speed.x /= 2;
+            //     speed.y += ball.getSpeed().y;
+            //     speed.y /= 2;
+            //     ball.setSpeed(-ball.getSpeed().x / 2, -ball.getSpeed().y / 2);
+            //     collide = true;
+            // }
         }
     }
     else
@@ -141,7 +153,7 @@ void Player::AI_play(Ball &ball)
         setSpeed(0, 0);
         if (dist > 0)
             addSpeed(2 * dirX / dist, 2 * dirY / dist);
-        AI_canMove = 70;
+        AI_canMove = 90;
     }
     else
         AI_canMove--;
